@@ -3,7 +3,7 @@ load_dotenv('.env')
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.agents import article_router as agent_router
+from app.routes.agents import agents_router as agent_router
 
 
 app = FastAPI(
