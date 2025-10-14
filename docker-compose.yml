@@ -1,0 +1,9 @@
+services:
+  oriona-agents:
+    image: rubix0307/oriona-agents:latest
+    container_name: oriona-agents
+    env_file:
+      - /etc/oriona-agents/.env
+    ports:
+      - "8020:8000"
+    restart: unless-stopped
