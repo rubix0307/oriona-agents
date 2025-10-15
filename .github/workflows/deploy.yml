@@ -1,4 +1,4 @@
-name: Only update and push docker image to hub
+name: Build, push image and apply on server
 
 on:
   push:
@@ -11,9 +11,12 @@ jobs:
       SERVER_IP: ${{ secrets.SERVER_IP }}
       SERVER_USER: ${{ secrets.SERVER_USER }}
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      SERVER_PROJECT_PATH: ${{ secrets.SERVER_PROJECT_PATH }}
+      SERVER_PROJECT_PUBLIC_PORT: ${{ secrets.SERVER_PROJECT_PUBLIC_PORT }}
       DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
       DOCKER_IMAGE_TAG: ${{ github.sha }}
-      DOCKER_IMAGE_NAME: oriona-agents
 
     steps:
       - name: Checkout repository
@@ -35,3 +38,39 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.DOCKER_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}
+
+      - name: Detect compose changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            compose:
+              - 'docker-compose.yml'
+
+      - name: Copy root compose to server
+        if: steps.changes.outputs.compose == 'true'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USER }}
+          key: ${{ env.SERVER_SSH_KEY }}
+          port: ${{ env.SERVER_PORT }}
+          source: |
+            docker-compose.yml
+          target: ${{ env.SERVER_PROJECT_PATH }}
+          overwrite: true
+          strip_components: 0
+
+      - name: Apply docker compose on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USER }}
+          key: ${{ env.SERVER_SSH_KEY }}
+          port: ${{ env.SERVER_PORT }}
+          script_stop: true
+          envs: DOCKER_REPOSITORY,DOCKER_IMAGE_NAME,DOCKER_IMAGE_TAG,SERVER_PROJECT_PUBLIC_PORT
+          script: |
+            cd ${{ env.SERVER_PROJECT_PATH }}
+            docker compose pull
+            docker compose up -d --remove-orphans
