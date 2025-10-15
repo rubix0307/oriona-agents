@@ -69,8 +69,8 @@ jobs:
           key: ${{ env.SERVER_SSH_KEY }}
           port: ${{ env.SERVER_PORT }}
           script_stop: true
-          envs: DOCKER_REPOSITORY,DOCKER_IMAGE_NAME,DOCKER_IMAGE_TAG,SERVER_PROJECT_PUBLIC_PORT
+          envs: DOCKER_REPOSITORY,DOCKER_IMAGE_NAME,DOCKER_IMAGE_TAG,SERVER_PROJECT_PUBLIC_PORT,SERVER_PROJECT_PATH
           script: |
-            cd ${{ env.SERVER_PROJECT_PATH }}
+            cd "$SERVER_PROJECT_PATH"
             docker compose pull
             docker compose up -d --remove-orphans
