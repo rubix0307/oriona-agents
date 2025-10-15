@@ -1,9 +1,9 @@
 services:
   oriona-agents:
-    image: rubix0307/oriona-agents:latest
+    image: ${DOCKER_REPOSITORY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
     container_name: oriona-agents
     env_file:
-      - /etc/oriona-agents/.env
+      - ${SERVER_PROJECT_PATH}.env
     ports:
-      - "8020:8000"
+      - "${SERVER_PROJECT_PUBLIC_PORT}:8000"
     restart: unless-stopped
