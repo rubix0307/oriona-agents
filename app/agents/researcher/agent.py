@@ -59,14 +59,14 @@ class ResearcherAgent(BaseAgentABC[ResearchResultSchema]):
 
     def clear(self, result: TypedStructuredResult) -> TypedStructuredResult:
 
-        clean_sourses = []
-        for item in result.parsed.sourses:
+        clean_sources = []
+        for item in result.parsed.sources:
             try:
-                r = requests.get(url=item.sourse.url)
+                r = requests.get(url=item.source.url)
                 r.raise_for_status()
-                clean_sourses.append(item)
+                clean_sources.append(item)
             except requests.HTTPError:
                 continue
 
-        result.parsed.sourses = clean_sourses
+        result.parsed.sources = clean_sources
         return result

@@ -11,8 +11,8 @@ class ResearchResultItemSourseSchema(BaseModel):
 
 class ResearchResultItemSchema(BaseModel):
     quote: str
-    sourse: ResearchResultItemSourseSchema
+    source: ResearchResultItemSourseSchema
 
 class ResearchResultSchema(BaseModel):
-    sourses: list[ResearchResultItemSchema]
+    sources: list[ResearchResultItemSchema]
     summary: str
