@@ -35,7 +35,3 @@ app.include_router(agent_router)
 @app.get('/health')
 def health():
     return {'status': 'ok'}
-
-@app.get('/alert')
-def alert():
-    raise RuntimeError('Prod alert')
