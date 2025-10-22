@@ -23,22 +23,27 @@ class WriterAgent(BaseAgentABC[ArticleResultSchema]):
             '– Keep the writing logical, but don’t make the structure too “academic” (introduction–body–conclusion).\n'
             '– Use synonyms to prevent word repetition.\n'
             '– You may include metaphors, comparisons, or vivid details.\n\n'
+
+            'Important: do not use any links, quotes, or references unless they are explicitly provided in the extra block. '
+            'You may take quotes and links only from the extra block and integrate them naturally into the text, without direct listing. '
+            'Do not invent or add additional sources.\n\n'
+
             'If extra_info contains sources, and some of them are reputable — mention a few of them naturally within the article.\n\n'
+
             'The content field must be formatted as valid HTML, using only the following tags:\n'
             '<p>, <a href target="_blank" rel="noopener">, <figure> (with <blockquote cite> and <figcaption> inside).\n'
             'All tags must be unescaped (i.e., not written as &lt;p&gt; etc.) and form fully valid HTML.\n\n'
-            
+
             'If a quote inside a <blockquote> is not in the specified output language, the <blockquote> tag must include a '
             '“translate” attribute containing the translation of that quote into the output language. For example:\n'
             '<blockquote cite="https://example.com" translate="Translation in the output language">Original text</blockquote>\n\n'
-            
+
             'The article should be useful, engaging, and easy to read — as if it were written by a real person, not an artificial intelligence.'
         )),
         ('human', 'Output language: {language}'),
         ('human', 'Extra: {extra_info}'),
         ('human', 'Article: {query}'),
     ])
-
 
     def __init__(self, model: Optional[ChatModel] = None):
         super().__init__(
