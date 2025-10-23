@@ -65,7 +65,7 @@ class ResearcherAgent(BaseAgentABC[ResearchResultSchema]):
                 r = requests.get(url=item.source.url)
                 r.raise_for_status()
                 clean_sources.append(item)
-            except requests.HTTPError:
+            except (requests.HTTPError, requests.ConnectionError, requests.Timeout):
                 continue
 
         result.parsed.sources = clean_sources
